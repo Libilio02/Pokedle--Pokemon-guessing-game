@@ -217,7 +217,6 @@ def comparador(name):
 
 #Preparacion de juego
 guess(str(random.randint(0,904)))
-print(name_guess)
 respuesta_nombre = ""
 info(str(input("Start by guessing a pokemon(from gen 1 to pokemon arceus, at the time just gen 9 missing): ")))
 if respuesta_nombre == name_guess:
