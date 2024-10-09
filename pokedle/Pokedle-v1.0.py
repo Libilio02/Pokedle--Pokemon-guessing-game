@@ -217,12 +217,15 @@ def comparador(name):
 
 #Preparacion de juego
 guess(str(random.randint(0,904)))
+print(name_guess)
 respuesta_nombre = ""
 info(str(input("Start by guessing a pokemon(from gen 1 to pokemon arceus, at the time just gen 9 missing): ")))
-
-
+if respuesta_nombre == name_guess:
+    imagen_ascii(name_guess)
+    print("Wow that was lucky, you have guessed the pokemon!")
+    exit()
 while respuesta_nombre != name_guess:
-    info(str(input("Nice try! Keep trying: ")))
     comparador(respuesta_nombre)
+    info(str(input("Nice try! Keep trying: ")))
 imagen_ascii(name_guess)
 print("Congratulations, you have guessed the pokemon!")
