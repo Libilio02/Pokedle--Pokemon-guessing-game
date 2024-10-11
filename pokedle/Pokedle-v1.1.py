@@ -4,6 +4,7 @@ import random
 from pathlib import Path
 import os
 from PIL import Image
+import tempfile
 
 #Pokedex: es del 1 al 1025
 current_directory = Path(__file__).parent  
@@ -70,12 +71,10 @@ def gen(i):
 def imagen_ascii(i):
     global image_path
     global pokemonDex
+    global temp_image
     
-    current_directory = Path(__file__).parent  
-    output_folder = Path(current_directory) / "output" 
-    imgs_folder = output_folder / "imgs"
-    imgs_folder.mkdir(parents=True, exist_ok=True) 
-    log_file = output_folder / "log.txt"
+    with tempfile.NamedTemporaryFile(prefix="pokemon_image_",suffix=".png", delete=True) as temp_image:
+        image_path = temp_image.name
     pokemonArg = i
     pokemonDex = pypokedex.get(name=pokemonArg)
 
@@ -89,12 +88,8 @@ def imagen_ascii(i):
     base_image_url = "http://www.serebii.net/swordshield/pokemon/"
     full_image_url = base_image_url + pokeoutput + ".png"
     response = requests.get(full_image_url)
-    image_path = imgs_folder / f"{pokemonDex.name.lower()}.png" 
     with open(image_path, 'wb') as file:
         file.write(response.content)
-    with open(log_file, 'a') as logfile:
-        logfile.write(f"{pokemonDex.name.lower()}\n")
-    
  
     img = Image.open(image_path)
     width, height = img.size
@@ -211,7 +206,6 @@ def comparador(name):
                 None
         if z == 0:
             print("\033[1;31m"+lista[i]+"\033[0m", end = " ")
-    #Pendiente de cambiar formato de texto
 
 #==============================================================================================
 
@@ -222,9 +216,11 @@ info(str(input("Start by guessing a pokemon(from gen 1 to pokemon arceus, at the
 if respuesta_nombre == name_guess:
     imagen_ascii(name_guess)
     print("Wow that was lucky, you have guessed the pokemon!")
-    exit()
-while respuesta_nombre != name_guess:
-    comparador(respuesta_nombre)
-    info(str(input("Nice try! Keep trying: ")))
-imagen_ascii(name_guess)
-print("Congratulations, you have guessed the pokemon!")
+else:
+    while respuesta_nombre != name_guess:
+        comparador(respuesta_nombre)
+        info(str(input("Nice try! Keep trying: ")))
+    imagen_ascii(name_guess)
+    print("Congratulations, you have guessed the pokemon!")
+temp_image.close()
+os.remove(temp_image.name)
